@@ -9,18 +9,18 @@ using Skillion.IO;
 
 namespace Skillion
 {
-    public class IntentActionResult : IConvertToActionResult
+    public class SkillionActionResult : IConvertToActionResult
     {
-        public IntentActionResult(IntentResponse result)
+        public SkillionActionResult(IntentResponse result)
         {
             Value = result;
         }
         
         public IntentResponse Value { get; }
         
-        public static implicit operator IntentActionResult(IntentResponse value)
+        public static implicit operator SkillionActionResult(IntentResponse value)
         {
-            return new IntentActionResult(value);
+            return new SkillionActionResult(value);
         }
 
         IActionResult IConvertToActionResult.Convert()

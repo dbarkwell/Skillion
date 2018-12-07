@@ -1,7 +1,10 @@
+using System;
+
 namespace Skillion.Attributes
 {
-    public class LaunchAttribute
-    {
-        
+    [AttributeUsage(AttributeTargets.Method)]
+    public sealed class LaunchAttribute : SkillionAttribute
+    {  
+        public static string Name => "Launch";
     }
 }

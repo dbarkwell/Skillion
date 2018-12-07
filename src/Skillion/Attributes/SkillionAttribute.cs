@@ -1,7 +1,9 @@
+using System;
+
 namespace Skillion.Attributes
 {
-    public class SkillionAttribute
+    [AttributeUsage(AttributeTargets.Class)]
+    public class SkillionAttribute : Attribute
     {
-        
     }
 }
