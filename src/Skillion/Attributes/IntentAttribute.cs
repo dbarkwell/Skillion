@@ -2,8 +2,8 @@ using System;
 
 namespace Skillion.Attributes
 {
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-    public sealed class IntentAttribute : Attribute
+    [AttributeUsage(AttributeTargets.Method)]
+    public sealed class IntentAttribute : SkillionAttribute
     {
         public IntentAttribute(string name)
         {

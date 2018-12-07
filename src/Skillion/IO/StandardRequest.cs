@@ -1,12 +1,16 @@
 using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
-namespace SkillionTest.IO
+namespace Skillion.IO
 {
     public class IntentRequest
     {
+        [JsonRequired]
         public string Version { get; set; }
+        [JsonRequired]
         public Session Session { get; set; }
+        [JsonRequired]
         public Request Request { get; set; }
     }
 

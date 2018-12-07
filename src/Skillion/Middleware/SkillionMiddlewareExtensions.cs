@@ -17,19 +17,32 @@ namespace Skillion.Middleware
 
             var methods = assembly.GetTypes().AsParallel()
                 .SelectMany(t => t.GetMethods())
-                .Where(m => m.GetCustomAttributes(typeof(IntentAttribute), false).Length > 0)
+                .Where(m => m.GetCustomAttributes(typeof(SkillionAttribute), false).Length > 0)
                 .ToArray();
             
             IDictionary<string, Tuple<string, string>> routing = new Dictionary<string, Tuple<string, string>>();
             foreach (var method in methods)
             {
-                var intentAttribute = method.GetCustomAttribute<IntentAttribute>();
-                var intent = intentAttribute.Name;
+                var skillionAttribute = method.GetCustomAttribute<SkillionAttribute>();
+                string name;
+                switch (skillionAttribute)
+                {
+                    case IntentAttribute intentAttribute:
+                        name = intentAttribute.Name;
+                        break;
+                    case LaunchAttribute launch:
+                        name = LaunchAttribute.Name;
+                        break;
+                    default:
+                        continue;
+                }
+                
                 var type = method.ReflectedType.FullName.Split(".");
                 var controller = type[type.Length - 1].Replace("Controller", string.Empty);
                 var action = method.Name;
-                routing.Add(intent, new Tuple<string, string>(controller, action));
+                routing.Add(name, new Tuple<string, string>(controller, action));
             }
+            
             
             app.UseMvc(routes =>
             {

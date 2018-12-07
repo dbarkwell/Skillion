@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 
 using Skillion.IO;
@@ -32,7 +33,7 @@ namespace Skillion
 
             // TODO total 24 kilobytes
             var json = JsonConvert.SerializeObject(Value, settings);
-            return new JsonResult(json);
+            return new ContentResult { Content = json, ContentType = "application/json", StatusCode = 200 };
         }
     }
 }
