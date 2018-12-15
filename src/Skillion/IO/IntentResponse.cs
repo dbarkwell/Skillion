@@ -4,12 +4,14 @@ using System.Linq;
 
 namespace Skillion.IO
 {
-    public class IntentResponse : StandardResponse
+    public class IntentResponse : StandardResponse<Response>
     {
         public IntentResponse()
         {
             Response = new Response();
         }
+        
+        public override Response Response { get;}
         
         public IntentResponse PlainTextSpeech(string text)
         {
@@ -63,7 +65,7 @@ namespace Skillion.IO
             return this;
         }
 
-        private static Directives CreateDirective(string token, string url, long offsetInMilliseconds)
+        private static StandardDirective CreateDirective(string token, string url, long offsetInMilliseconds)
         {
             var stream = new Stream
             {
@@ -77,7 +79,7 @@ namespace Skillion.IO
                 Stream = stream
             };
             
-            var directive = new Directives
+            var directive = new StandardDirective()
             {
                 Type = "AudioPlayer.Play",
                 PlayBehavior = "REPLACE_ALL",

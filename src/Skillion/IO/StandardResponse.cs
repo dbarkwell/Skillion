@@ -2,24 +2,29 @@ using System.Collections.Generic;
 
 namespace Skillion.IO
 {
-    public abstract class StandardResponse
+    public abstract class StandardResponse<T>
     {
         public string Version => "1.0";
         
-        public Response Response { get; set; }
+        public abstract T Response { get; }
+        
+        public IDictionary<string, object> SessionAttributes { get; set; }
     }
 
-    public class Response
+    public abstract class ResponseBase<T>
     {
         public OutputSpeech OutputSpeech { get; set; }
         
-        public Card Card { get; set; }
-        
-        public Reprompt Reprompt { get; set; }
-
-        public IEnumerable<Directives> Directives { get; set; }
+        public IEnumerable<T> Directives { get; set; }
         
         public bool? ShouldEndSession { get; set; } = true;
+    }
+    
+    public class Response : ResponseBase<StandardDirective>
+    {
+        public Card Card { get; set; }
+        
+        public Reprompt Reprompt { get; set; }  
     }
     
     // TODO total size 
@@ -45,7 +50,7 @@ namespace Skillion.IO
         public string Text { get; set; }
     }
 
-    public class Directives
+    public class StandardDirective
     {
         public string Type { get; set; }
         

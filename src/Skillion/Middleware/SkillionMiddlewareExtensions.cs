@@ -33,6 +33,9 @@ namespace Skillion.Middleware
                     case LaunchAttribute launch:
                         name = LaunchAttribute.Name;
                         break;
+                    case SessionEndedAttribute sessionEnded:
+                        name = SessionEndedAttribute.Name;
+                        break;
                     default:
                         continue;
                 }

@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.AspNetCore.Routing;
-
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Skillion.Attributes;
 using Skillion.IO;
@@ -45,60 +45,48 @@ namespace Skillion.Middleware
             try
             {
                 var request = await ParseBodyToStandardRequest(context.HttpContext.Request);
-                string route;
-                switch (request.Request.Type)
-                {
-                    case "IntentRequest":
-                        route = request.Request.Intent.Name;
-                        break;
-                    case "LaunchRequest":
-                        route = LaunchAttribute.Name;
-                        break;
-                    default:
-                        await NotFoundResponse(context);
-                        return;
-                } 
+                var route = GetRouteName(request.Request);
                 
-                await IntentResponse(context, route, request.Session);
+                if (string.IsNullOrEmpty(route) || !_routing.ContainsKey(route))
+                    throw new IntentNotFoundException();
+
+                var controllerAction = _routing[route];
+                context.RouteData.Values["controller"] = controllerAction.Item1;
+                context.RouteData.Values["action"] = controllerAction.Item2;
+                context.HttpContext.Items["standardRequest"] = request.Request;
+                context.HttpContext.Items["context"] = request.Context;
+                
+                if (request.Session.New && request.Session.Attributes != null)
+                {
+                    context.HttpContext.Request.ContentType = "application/json";
+                    context.HttpContext.Request.Body = SerializeAttributesToStream(request.Session.Attributes);
+                }
+
+                await _defaultRouter.RouteAsync(context);
             }
-            catch
+            catch(Exception ex)
             {
                 // TODO log exception
                 await ExceptionThrownResponse(context);
             }
         }
 
-        private async Task IntentResponse(RouteContext context, string route, Session session = null)
+        private static string GetRouteName(StandardRequest standardRequest)
         {
-            if (!_routing.ContainsKey(route))
-                throw new IntentNotFoundException();
-
-            var controllerAction = _routing[route];
-            context.RouteData.Values["controller"] = controllerAction.Item1;
-            context.RouteData.Values["action"] = controllerAction.Item2;
-
-            if (session != null && !session.New && session.Attributes != null)
+            switch (standardRequest.Type)
             {
-                context.HttpContext.Request.ContentType = "application/json";
-                context.HttpContext.Request.Body = SerializeAttributesToStream(session.Attributes);
-            }
-
-            await _defaultRouter.RouteAsync(context);
+                case "IntentRequest":
+                    return standardRequest.Intent.Name;
+                case "LaunchRequest":
+                    return LaunchAttribute.Name;
+                case "SessionEndedRequest":
+                    return SessionEndedAttribute.Name;
+                default:
+                    return string.Empty;
+            }     
         }
         
-        private async Task NotFoundResponse(RouteContext context)
-        {
-            context.HttpContext.Response.StatusCode = StatusCodes.Status404NotFound;
-            await _defaultRouter.RouteAsync(context);
-        }
-        
-        private async Task ExceptionThrownResponse(RouteContext context)
-        {
-            context.HttpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
-            await _defaultRouter.RouteAsync(context);
-        }
-        
-        private static async Task<StandardRequest> ParseBodyToStandardRequest(HttpRequest request)
+        private static async Task<StandardRequestBase> ParseBodyToStandardRequest(HttpRequest request)
         {
             VerifyRequest(request);
             
@@ -108,7 +96,7 @@ namespace Skillion.Middleware
                 var body = await reader.ReadToEndAsync();
                 try
                 {
-                    return JsonConvert.DeserializeObject<StandardRequest>(body);
+                    return JsonConvert.DeserializeObject<StandardRequestBase>(body);
                 }
                 catch
                 {
@@ -134,5 +122,18 @@ namespace Skillion.Middleware
                 Position = 0
             };
         }
+        
+        private async Task NotFoundResponse(RouteContext context)
+        {
+            context.HttpContext.Response.StatusCode = StatusCodes.Status404NotFound;
+            await _defaultRouter.RouteAsync(context);
+        }
+        
+        private async Task ExceptionThrownResponse(RouteContext context)
+        {
+            context.HttpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            await _defaultRouter.RouteAsync(context);
+        }
+
     }
 }
