@@ -12,4 +12,8 @@
       <ProjectReference Include="..\..\src\Skillion\Skillion.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <PackageReference Include="Alexa.NET" Version="1.8.2" />
+    </ItemGroup>
+    
 </Project>
