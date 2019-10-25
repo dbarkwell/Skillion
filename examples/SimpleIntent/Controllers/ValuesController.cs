@@ -8,7 +8,7 @@ namespace SimpleIntent.Controllers
 {
     public class ValuesController : ControllerBase
     {
-        [Intent("HelloIntent")]
+        [IntentRequest("HelloIntent")]
         public SkillionActionResult<SkillResponse> HelloIntent()
         {
             var greeting = "Hello, how are you?";

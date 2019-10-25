@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using Alexa.NET;
 using Alexa.NET.Request.Type;
 using Alexa.NET.Response;
-using Microsoft.AspNetCore.Mvc;
 using Skillion;
 using Skillion.Attributes;
 
@@ -10,13 +9,13 @@ namespace ManualTest.Controllers
 {
     public class ValuesController : SkillionController
     {
-        [FallbackIntent]
+        [FallbackIntentRequest]
         public SkillionActionResult<SkillResponse> Fallback()
         {
             return Hello();
         }
         
-        [Intent("HelloIntent")]
+        [IntentRequest("HelloIntent")]
         public SkillionActionResult<SkillResponse> Hello()
         {
             var numberOfItems = ((IntentRequest)RequestContext).Intent.Slots != null ? 
@@ -54,12 +53,12 @@ namespace ManualTest.Controllers
             var response = new IntentResponse();
             return response.PlainTextSpeech("Welcome to my skill. Ask some questions.").SimpleCard("Welcome", "Welcome to my skill. Ask some questions.");
         }
-        
-        [SessionEnded]
+        */
+
+        [SessionEndedRequest]
         public void End()
         {
-            var reason = StandardRequest.Reason;
+            Console.WriteLine(RequestContext.RequestId);
         }
-        */
     }
 }

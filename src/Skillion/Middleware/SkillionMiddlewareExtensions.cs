@@ -14,8 +14,8 @@ namespace Skillion.Middleware
         public static void AddSkillion(this IServiceCollection services)
         {
             var assembly = Assembly.GetCallingAssembly();
-            
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest);
+
+            services.AddControllers().AddNewtonsoftJson();
             services.AddSingleton<SkillionRouteValueTransformer>();
             services.AddSingleton<IRouteDataService>(MapRoutes(assembly));
         }
@@ -30,36 +30,22 @@ namespace Skillion.Middleware
         {
             var methods = assembly.GetTypes().AsParallel()
                  .SelectMany(t => t.GetMethods())
-                 .Where(m => m.GetCustomAttributes(typeof(SkillionAttribute), false).Any())
+                 .Where(m => m.GetCustomAttributes(typeof(SkillionRequestAttribute), false).Any())
                  .ToArray();
             
             var routeMapDictionary = new Dictionary<string, RouteData>();
             foreach (var method in methods)
             {
-                var skillionAttribute = method.GetCustomAttribute<SkillionAttribute>();
-                string name;
-                switch (skillionAttribute)
-                {
-                    case IntentAttribute intentAttribute:
-                        name = intentAttribute.Name;
-                        break;
-                    case LaunchAttribute launch:
-                        name = LaunchAttribute.Name;
-                        break;
-                    case SessionEndedAttribute sessionEnded:
-                        name = SessionEndedAttribute.Name;
-                        break;
-                    case FallbackIntentAttribute fallback:
-                        name = FallbackIntentAttribute.Name;
-                        break;
-                    default:
-                        continue;
-                }
+                var skillionAttribute = method.GetCustomAttribute<SkillionRequestAttribute>();
                 
-                var type = method.ReflectedType.FullName.Split(".");
+                var type = method.ReflectedType?.FullName?.Split(".");
+                if (type == null || type.Length == 0) 
+                    continue;
+                
                 var controller = type[^1].Replace("Controller", string.Empty);
                 var action = method.Name;
-                routeMapDictionary.Add(name, new RouteData(controller, action));
+
+                routeMapDictionary.Add(skillionAttribute.Name, new RouteData(controller, action));
             }
 
             return new RouteDataService(routeMapDictionary);
