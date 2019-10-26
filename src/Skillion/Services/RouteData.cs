@@ -8,8 +8,8 @@ namespace Skillion.Services
             Action = action;
         }
         
-        public string Controller { get; set; }
+        public string Controller { get; }
         
-        public string Action { get; set; }
+        public string Action { get; }
     }
 }

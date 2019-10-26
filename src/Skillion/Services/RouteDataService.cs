@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using Alexa.NET.Request.Type;
 
 namespace Skillion.Services
 {
-    public class RouteDataService : IRouteDataService
+    internal class RouteDataService : IRouteDataService
     {
         private readonly IDictionary<string, RouteData> _routes;
         
@@ -11,14 +12,31 @@ namespace Skillion.Services
             _routes = routes;
         }
         
-        public RouteData GetRouteMap(string name)
+        public bool TryGetRoute(Request request, out RouteData routeData)
         {
-            return HasRoute(name) ? _routes[name] : null;
+            var routeName = GetRouteName(request);
+            if (!HasRoute(routeName))
+            {
+                routeData = null;
+                return false;
+            }
+
+            routeData = _routes[routeName];
+            return true;
         }
 
-        public bool HasRoute(string name)
+        private bool HasRoute(string routeName)
         {
-            return _routes.ContainsKey(name);
+            return _routes.ContainsKey(routeName);
+        }
+        
+        private static string GetRouteName(Request request)
+        {
+            return request.Type switch
+            {
+                "IntentRequest" => ((IntentRequest) request).Intent.Name,
+                _ => request.Type
+            };
         }
     }
 }
