@@ -4,6 +4,6 @@ namespace Skillion
     {
         public string SkillId { get; set; }
 
-        public bool AlwaysValidateSkillId { get; set; }
+        public bool AlwaysValidateSkillRequest { get; set; }
     }
 }

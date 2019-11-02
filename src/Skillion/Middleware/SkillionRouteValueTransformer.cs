@@ -1,9 +1,9 @@
+using System;
 using System.Threading.Tasks;
 using Alexa.NET.Request;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Routing;
-using Newtonsoft.Json;
 using Skillion.Services;
 
 namespace Skillion.Middleware
@@ -33,7 +33,7 @@ namespace Skillion.Middleware
             {
                 skill = await _skillRequestParser.ParseHttpRequestAsync(httpContext.Request);
             }
-            catch (JsonException e)
+            catch (Exception e)
             {
                 // log;
                 return null;
@@ -55,8 +55,9 @@ namespace Skillion.Middleware
 
         private static bool IsValidContentType(string contentType)
         {
-            return contentType.Equals("application/json") ||
-                   contentType.Equals("application/json; charset=UTF-8");
+            var contentTypeLower = contentType.ToLower();
+            return contentTypeLower.Equals("application/json") ||
+                   contentTypeLower.Equals("application/json; charset=utf-8");
         }
     }
 }
