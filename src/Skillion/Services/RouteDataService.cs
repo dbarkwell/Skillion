@@ -27,7 +27,7 @@ namespace Skillion.Services
 
         private bool HasRoute(string routeName)
         {
-            return _routes.ContainsKey(routeName);
+            return !string.IsNullOrEmpty(routeName) && _routes.ContainsKey(routeName);
         }
 
         private static string GetRouteName(Request request)
