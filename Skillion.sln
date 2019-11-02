@@ -6,7 +6,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F74FE47C-26D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Skillion", "src\Skillion\Skillion.csproj", "{30644FBD-0D84-454F-B3A6-4B581CB58B4E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkillionUnitTests", "tests\SkillionUnitTests\SkillionUnitTests.csproj", "{AC9D2AF1-184F-4111-80AA-D2834C0FEA4D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "tests\UnitTests\UnitTests.csproj", "{AC9D2AF1-184F-4111-80AA-D2834C0FEA4D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManualTest", "tests\ManualTest\ManualTest.csproj", "{325D895C-A618-4508-B99E-CE17F8C953FA}"
 EndProject

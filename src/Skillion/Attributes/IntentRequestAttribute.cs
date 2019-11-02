@@ -9,7 +9,7 @@ namespace Skillion.Attributes
         {
             Name = name;
         }
-        
+
         public override string Name { get; }
     }
 }

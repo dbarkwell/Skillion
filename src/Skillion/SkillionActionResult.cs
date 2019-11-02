@@ -1,11 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
-
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
-
-using Skillion.IO;
 
 namespace Skillion
 {
@@ -15,13 +11,8 @@ namespace Skillion
         {
             Value = result;
         }
-        
+
         public T Value { get; }
-        
-        public static implicit operator SkillionActionResult<T>(T value)
-        {
-            return new SkillionActionResult<T>(value);
-        }
 
         IActionResult IConvertToActionResult.Convert()
         {
@@ -33,7 +24,12 @@ namespace Skillion
 
             // TODO total 24 kilobytes
             var json = JsonConvert.SerializeObject(Value, settings);
-            return new ContentResult { Content = json, ContentType = "application/json", StatusCode = 200 };
+            return new ContentResult {Content = json, ContentType = "application/json", StatusCode = 200};
+        }
+
+        public static implicit operator SkillionActionResult<T>(T value)
+        {
+            return new SkillionActionResult<T>(value);
         }
     }
 }

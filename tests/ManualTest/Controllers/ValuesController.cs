@@ -1,5 +1,6 @@
 ﻿using System;
 using Alexa.NET;
+using Alexa.NET.Request;
 using Alexa.NET.Request.Type;
 using Alexa.NET.Response;
 using Skillion;
@@ -14,46 +15,43 @@ namespace ManualTest.Controllers
         {
             return Hello();
         }
-        
+
         [IntentRequest("HelloIntent")]
         public SkillionActionResult<SkillResponse> Hello()
         {
-            var numberOfItems = ((IntentRequest)RequestContext).Intent.Slots != null ? 
-                ((IntentRequest)RequestContext).Intent.Slots["NumberOfItems"].Value : 
-                "0";
+            if (!TryCastRequest<IntentRequest>(out var intent))
+                return ResponseBuilder.TellWithCard("Something went wrong", "Error", "Something went wrong");
+                
+            var numberOfItems = intent.Intent.Slots != null
+                ? ((IntentRequest) RequestContext).Intent.Slots["NumberOfItems"].Value
+                : "0";
 
             var text = $"Here are your {numberOfItems} items";
             return ResponseBuilder.TellWithCard(text, "Your items", text);
-        }
-/*
-        [Intent("SessionIntent")]
-        public SkillionActionResult<Response> Hello2([FromBody] IDictionary<string, object> session)
-        {
-            var response = new IntentResponse
-            {
-                SessionAttributes = new Dictionary<string, object> {{"name", session["name"]}}
-            };
-            return response
-                .PlainTextSpeech($"Hello {session["name"]}, how are you?")
-                .SimpleCard("Greetings", $"Hello {session["name"]}, how are you?");
+
         }
         
-        [Intent("DialogIntent")]
-        public SkillionActionResult<DialogDirectiveResponse> Dialog()
+        [IntentRequest("SessionIntent")]
+        public SkillionActionResult<SkillResponse> Hello2()
         {
-            var response = new DialogDelegateResponse(StandardRequest.Intent);
-            response.UpdateSlot("fromCity", "Toronto");
-            
-            return response;
+            var greeting = $"Hello {SessionContext.Attributes["name"]}, how are you?";
+            return ResponseBuilder.TellWithCard(greeting, "Greetings", greeting);
         }
-        
-        [Launch]
-        public SkillionActionResult<IntentResponse> Welcome()
+
+        [IntentRequest("DialogIntent")]
+        public SkillionActionResult<SkillResponse> Dialog()
         {
-            var response = new IntentResponse();
-            return response.PlainTextSpeech("Welcome to my skill. Ask some questions.").SimpleCard("Welcome", "Welcome to my skill. Ask some questions.");
+            var intentRequest = RequestContext as IntentRequest;
+            intentRequest?.Intent.Slots.Add("fromCity", new Slot {Name = "fromCity", Value = "Toronto"});
+            return ResponseBuilder.DialogDelegate(intentRequest?.Intent);
         }
-        */
+
+        [LaunchRequest]
+        public SkillionActionResult<SkillResponse> Welcome()
+        {
+            const string response = "Welcome to my skill. Ask some questions.";
+            return ResponseBuilder.TellWithCard(response, "Welcome", response);
+        }
 
         [SessionEndedRequest]
         public void End()

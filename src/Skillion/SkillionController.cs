@@ -8,6 +8,20 @@ namespace Skillion
     {
         protected Request RequestContext => (Request) HttpContext?.Items["request"];
 
-        protected Context Context => (Context) HttpContext?.Items["context"];
+        protected Context SkillContext => (Context) HttpContext?.Items["context"];
+
+        protected Session SessionContext => (Session) HttpContext?.Items["session"];
+
+        protected virtual bool TryCastRequest<T>(out T request) where T : Request
+        {
+            if (RequestContext is T castRequest)
+            {
+                request = castRequest;
+                return true;
+            }
+
+            request = null;
+            return false;
+        }
     }
 }

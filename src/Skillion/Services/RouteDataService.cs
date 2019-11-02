@@ -6,12 +6,12 @@ namespace Skillion.Services
     internal class RouteDataService : IRouteDataService
     {
         private readonly IDictionary<string, RouteData> _routes;
-        
+
         public RouteDataService(IDictionary<string, RouteData> routes)
         {
             _routes = routes;
         }
-        
+
         public bool TryGetRoute(Request request, out RouteData routeData)
         {
             var routeName = GetRouteName(request);
@@ -29,7 +29,7 @@ namespace Skillion.Services
         {
             return _routes.ContainsKey(routeName);
         }
-        
+
         private static string GetRouteName(Request request)
         {
             return request.Type switch
