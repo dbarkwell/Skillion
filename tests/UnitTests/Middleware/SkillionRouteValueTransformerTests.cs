@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using Alexa.NET.Request;
 using Alexa.NET.Request.Type;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Routing;
 using Moq;
+using Newtonsoft.Json;
 using Skillion;
 using Skillion.Middleware;
 using Skillion.Services;
@@ -36,6 +36,7 @@ namespace SkillionUnitTests.Middleware
             {
                 _httpRequest.Setup(x => x.Path).Returns("/test/path");
                 _httpRequest.Setup(x => x.Method).Returns("POST");
+                _httpRequest.Setup(x => x.ContentType).Returns("application/json");
                 _httpContext.Setup(x => x.Request).Returns(_httpRequest.Object);
                 
                 var routeValueTransformer = new SkillionRouteValueTransformer(_skillRequestParser.Object, _routeDataService.Object);
@@ -50,6 +51,22 @@ namespace SkillionUnitTests.Middleware
             {
                 _httpRequest.Setup(x => x.Path).Returns("/");
                 _httpRequest.Setup(x => x.Method).Returns("GET");
+                _httpRequest.Setup(x => x.ContentType).Returns("application/json");
+                _httpContext.Setup(x => x.Request).Returns(_httpRequest.Object);
+                
+                var routeValueTransformer = new SkillionRouteValueTransformer(_skillRequestParser.Object, _routeDataService.Object);
+                var routeValueDictionary = new RouteValueDictionary();
+                var values = await routeValueTransformer.TransformAsync(_httpContext.Object, routeValueDictionary);
+                
+                Assert.Null(values);
+            }
+            
+            [Fact]
+            public async Task ContentTypeIsNotJson_ReturnNull()
+            {
+                _httpRequest.Setup(x => x.Path).Returns("/");
+                _httpRequest.Setup(x => x.Method).Returns("GET");
+                _httpRequest.Setup(x => x.ContentType).Returns("application/xml");
                 _httpContext.Setup(x => x.Request).Returns(_httpRequest.Object);
                 
                 var routeValueTransformer = new SkillionRouteValueTransformer(_skillRequestParser.Object, _routeDataService.Object);
@@ -75,6 +92,7 @@ namespace SkillionUnitTests.Middleware
                 _routeDataService.Setup(x => x.TryGetRoute(skillRequest.Request, out routeData)).Returns(false);
                 _httpRequest.Setup(x => x.Path).Returns("/");
                 _httpRequest.Setup(x => x.Method).Returns("POST");
+                _httpRequest.Setup(x => x.ContentType).Returns("application/json");
                 _httpContext.Setup(x => x.Request).Returns(_httpRequest.Object);
                 _httpContext.Setup(x => x.Items).Returns(new Dictionary<object, object>());
                 
@@ -101,6 +119,7 @@ namespace SkillionUnitTests.Middleware
                 _routeDataService.Setup(x => x.TryGetRoute(skillRequest.Request, out routeData)).Returns(true);
                 _httpRequest.Setup(x => x.Path).Returns("/");
                 _httpRequest.Setup(x => x.Method).Returns("POST");
+                _httpRequest.Setup(x => x.ContentType).Returns("application/json");
                 _httpContext.Setup(x => x.Request).Returns(_httpRequest.Object);
                 _httpContext.Setup(x => x.Items).Returns(new Dictionary<object, object>());
                 
@@ -110,6 +129,32 @@ namespace SkillionUnitTests.Middleware
                 
                 Assert.True(values["controller"].Equals(routeData.Controller));
                 Assert.True(values["action"].Equals(routeData.Action));
+            }
+            
+            [Fact]
+            public async Task InvalidRequestBody_ReturnNull()
+            {
+                var skillRequest = new SkillRequest
+                {
+                    Session = new Session(), 
+                    Context = new Context(),
+                    Request = new IntentRequest {Intent = new Intent {Name = "Test"}}
+                };
+                var routeData = new RouteData("TestController", "TestAction");
+
+                _skillRequestParser.Setup(x => x.ParseHttpRequestAsync(_httpRequest.Object)).Throws<JsonException>();
+                _routeDataService.Setup(x => x.TryGetRoute(skillRequest.Request, out routeData)).Returns(true);
+                _httpRequest.Setup(x => x.Path).Returns("/");
+                _httpRequest.Setup(x => x.Method).Returns("POST");
+                _httpRequest.Setup(x => x.ContentType).Returns("application/json");
+                _httpContext.Setup(x => x.Request).Returns(_httpRequest.Object);
+                _httpContext.Setup(x => x.Items).Returns(new Dictionary<object, object>());
+                
+                var routeValueTransformer = new SkillionRouteValueTransformer(_skillRequestParser.Object, _routeDataService.Object);
+                var routeValueDictionary = new RouteValueDictionary();
+                var values = await routeValueTransformer.TransformAsync(_httpContext.Object, routeValueDictionary);
+                
+                Assert.Null(values);
             }
         }
     }
