@@ -24,19 +24,19 @@ namespace Skillion.Services
             routeData = _routes[routeName];
             return true;
         }
-
-        private bool HasRoute(string routeName)
-        {
-            return !string.IsNullOrEmpty(routeName) && _routes.ContainsKey(routeName);
-        }
-
-        private static string GetRouteName(Request request)
+        
+        public string GetRouteName(Request request)
         {
             return request.Type switch
             {
                 "IntentRequest" => ((IntentRequest) request).Intent.Name,
                 _ => request.Type
             };
+        }
+        
+        private bool HasRoute(string routeName)
+        {
+            return !string.IsNullOrEmpty(routeName) && _routes.ContainsKey(routeName);
         }
     }
 }

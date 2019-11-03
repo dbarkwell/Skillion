@@ -21,16 +21,15 @@ namespace ManualTest.Controllers
         {
             if (!TryCastRequest<IntentRequest>(out var intent))
                 return ResponseBuilder.TellWithCard("Something went wrong", "Error", "Something went wrong");
-                
+
             var numberOfItems = intent.Intent.Slots != null
                 ? ((IntentRequest) RequestContext).Intent.Slots["NumberOfItems"].Value
                 : "0";
 
             var text = $"Here are your {numberOfItems} items";
             return ResponseBuilder.TellWithCard(text, "Your items", text);
-
         }
-        
+
         [IntentRequest("SessionIntent")]
         public SkillionActionResult<SkillResponse> Hello2()
         {
