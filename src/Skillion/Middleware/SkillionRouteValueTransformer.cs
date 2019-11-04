@@ -73,7 +73,8 @@ namespace Skillion.Middleware
         private static bool IsValidContentType(string contentType)
         {
             var contentTypeLower = contentType.ToLower();
-            return contentTypeLower.Equals("application/json") ||
+            return contentTypeLower.Equals("application/json") || 
+                   contentTypeLower.Equals("application/json;charset=utf-8") ||
                    contentTypeLower.Equals("application/json; charset=utf-8");
         }
     }

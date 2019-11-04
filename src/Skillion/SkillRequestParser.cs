@@ -17,7 +17,7 @@ namespace Skillion
 {
     public class SkillRequestParser : ISkillRequestParser
     {
-        private const long ContentLengthLimit = 1024 * 1024 * 128;
+        private const long ContentLengthLimit = 1024 * 1024;
         private readonly ILogger _logger;
         private readonly SkillionConfiguration _skillionConfiguration;
         private readonly IWebHostEnvironment _webHostEnvironment;
