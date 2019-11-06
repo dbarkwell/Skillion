@@ -11,7 +11,8 @@ namespace Skillion.IO
             return RequestVerification.RequestTimestampWithinTolerance(skillRequest);
         }
 
-        public async ValueTask<bool> IsRequestValidAsync(string encodedSignature, Uri signatureCertChainUrl, string request)
+        public async ValueTask<bool> IsRequestValidAsync(string encodedSignature, Uri signatureCertChainUrl,
+            string request)
         {
             return await RequestVerification.Verify(encodedSignature, signatureCertChainUrl, request);
         }

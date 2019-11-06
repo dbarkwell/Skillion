@@ -24,7 +24,7 @@ namespace Skillion.Services
             routeData = _routes[routeName];
             return true;
         }
-        
+
         public string GetRouteName(Request request)
         {
             return request.Type switch
@@ -33,7 +33,7 @@ namespace Skillion.Services
                 _ => request.Type
             };
         }
-        
+
         private bool HasRoute(string routeName)
         {
             return !string.IsNullOrEmpty(routeName) && _routes.ContainsKey(routeName);

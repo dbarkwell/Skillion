@@ -19,9 +19,9 @@ namespace Skillion.IO
     {
         private const long ContentLengthLimit = 1024 * 24;
         private readonly ILogger _logger;
+        private readonly ISkillRequestValidator _requestValidator;
         private readonly SkillionConfiguration _skillionConfiguration;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        private readonly ISkillRequestValidator _requestValidator;
 
         public SkillRequestParser(IWebHostEnvironment webHostEnvironment,
             IOptions<SkillionConfiguration> skillionConfiguration,
@@ -76,7 +76,7 @@ namespace Skillion.IO
             var isTimestampValid = _requestValidator.IsTimestampValid(skillRequest);
             var isRequestValid =
                 await _requestValidator.IsRequestValidAsync(encodedSignature, new Uri(signatureCertChainUrl), body);
-                
+
 
             _logger?.LogInformation($"Timestamp validation {isTimestampValid.ToString()}");
             _logger?.LogInformation($"Request validation {isRequestValid.ToString()}");
