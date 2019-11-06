@@ -13,21 +13,24 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Skillion.Middleware;
 
-namespace Skillion
+namespace Skillion.IO
 {
     public class SkillRequestParser : ISkillRequestParser
     {
-        private const long ContentLengthLimit = 1024 * 1024;
+        private const long ContentLengthLimit = 1024 * 24;
         private readonly ILogger _logger;
         private readonly SkillionConfiguration _skillionConfiguration;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly ISkillRequestValidator _requestValidator;
 
         public SkillRequestParser(IWebHostEnvironment webHostEnvironment,
             IOptions<SkillionConfiguration> skillionConfiguration,
+            ISkillRequestValidator requestValidator,
             ILogger<SkillionRouteValueTransformer> logger = null)
         {
             _webHostEnvironment = webHostEnvironment;
             _skillionConfiguration = skillionConfiguration.Value;
+            _requestValidator = requestValidator;
             _logger = logger;
         }
 
@@ -56,13 +59,13 @@ namespace Skillion
             if (skill.Context.System.Application.ApplicationId != _skillionConfiguration.SkillId)
                 throw new Exception("Invalid application id.");
 
-            if (!await IsValidSignature(httpRequest, skill, rawJsonRequest.ToString(Formatting.None)))
-                throw new Exception("Invalid signature in request.");
+            if (!await IsValidRequestAsync(httpRequest, skill, rawJsonRequest.ToString(Formatting.None)))
+                throw new Exception("Invalid request. Check timestamp or signature.");
 
             return skill;
         }
 
-        private async ValueTask<bool> IsValidSignature(HttpRequest request, SkillRequest skillRequest, string body)
+        private async ValueTask<bool> IsValidRequestAsync(HttpRequest request, SkillRequest skillRequest, string body)
         {
             if (!request.Headers.TryGetValue("SignatureCertChainUrl", out var signatureCertChainUrl))
                 return false;
@@ -70,9 +73,10 @@ namespace Skillion
             if (!request.Headers.TryGetValue("Signature", out var encodedSignature))
                 return false;
 
-            var isTimestampValid = RequestVerification.RequestTimestampWithinTolerance(skillRequest);
+            var isTimestampValid = _requestValidator.IsTimestampValid(skillRequest);
             var isRequestValid =
-                await RequestVerification.Verify(encodedSignature, new Uri(signatureCertChainUrl), body);
+                await _requestValidator.IsRequestValidAsync(encodedSignature, new Uri(signatureCertChainUrl), body);
+                
 
             _logger?.LogInformation($"Timestamp validation {isTimestampValid.ToString()}");
             _logger?.LogInformation($"Request validation {isRequestValid.ToString()}");
@@ -80,7 +84,7 @@ namespace Skillion
             return isTimestampValid && isRequestValid;
         }
 
-        private async ValueTask<JObject> ParseBodyToRequestAsync(Stream stream)
+        private static async ValueTask<JObject> ParseBodyToRequestAsync(Stream stream)
         {
             using var streamReader = new HttpRequestStreamReader(stream, Encoding.UTF8);
             using var jsonReader = new JsonTextReader(streamReader);

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Skillion.Attributes;
+using Skillion.IO;
 using Skillion.Services;
 
 namespace Skillion.Middleware
@@ -22,6 +23,7 @@ namespace Skillion.Middleware
 
             services.AddScoped<ISkillRequestParser, SkillRequestParser>();
             services.AddScoped<SkillionRouteValueTransformer>();
+            services.AddScoped<ISkillRequestValidator, SkillRequestValidator>();
             services.AddSingleton<IRouteDataService>(MapRoutes(assembly));
         }
 

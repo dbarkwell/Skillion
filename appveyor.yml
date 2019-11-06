@@ -3,7 +3,6 @@ branches:
   only:
     - master
 image: Ubuntu
-before_build:
-  - pwsh: dotnet restore
+configuration: Release
 build:
   verbosity: minimal
