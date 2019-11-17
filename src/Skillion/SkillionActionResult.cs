@@ -22,10 +22,11 @@ namespace Skillion
                 NullValueHandling = NullValueHandling.Ignore
             };
 
-            // TODO total 24 kilobytes
-            var json = JsonConvert.SerializeObject(Value, settings);
-            return new ContentResult
-                {Content = json, ContentType = "application/json; charset=utf-8", StatusCode = 200};
+            return new JsonResult(Value, settings)
+            {
+                StatusCode = 200,
+                ContentType = "application/json; charset=utf-8"
+            };
         }
 
         public static implicit operator SkillionActionResult<T>(T value)

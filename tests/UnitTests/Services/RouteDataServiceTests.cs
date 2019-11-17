@@ -84,5 +84,32 @@ namespace SkillionUnitTests.Services
                 Assert.True(hasRoute);
             }
         }
+
+        public class GetRouteName
+        {
+            [Fact]
+            public void IntentRequest_ReturnsIntentName()
+            {
+                const string intentName = "Test";
+                var routes = new Dictionary<string, RouteData> {{"Test", new RouteData("TestController", "Index")}};
+                var routeDataService = new RouteDataService(routes);
+
+                var name = routeDataService.GetRouteName(
+                    new IntentRequest {Intent = new Intent {Name = intentName}, Type = "IntentRequest"});
+                
+                Assert.Equal(intentName, name);
+            }
+            
+            [Fact]
+            public void LaunchRequest_ReturnsTypeName()
+            {
+                var routes = new Dictionary<string, RouteData> {{nameof(LaunchRequest), new RouteData("TestController", "Index")}};
+                var routeDataService = new RouteDataService(routes);
+
+                var name = routeDataService.GetRouteName(new LaunchRequest {Type = "LaunchRequest"});
+
+                Assert.Equal(nameof(LaunchRequest), name);
+            }
+        }
     }
 }

@@ -61,9 +61,9 @@ namespace Skillion.Middleware
             httpContext.Items["request"] = skill.Request;
             httpContext.Items["context"] = skill.Context;
             httpContext.Items["session"] = skill.Session;
-            
+
             _logger?.LogInformation($"Routing to: controller = {routeData.Controller}, action = {routeData.Action}");
-            
+
             return new RouteValueDictionary
             {
                 {"controller", routeData.Controller},
@@ -74,7 +74,7 @@ namespace Skillion.Middleware
         private static bool IsValidContentType(string contentType)
         {
             var contentTypeLower = contentType.ToLower();
-            return contentTypeLower.Equals("application/json") || 
+            return contentTypeLower.Equals("application/json") ||
                    contentTypeLower.Equals("application/json;charset=utf-8") ||
                    contentTypeLower.Equals("application/json; charset=utf-8");
         }

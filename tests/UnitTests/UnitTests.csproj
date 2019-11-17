@@ -20,4 +20,8 @@
       <ProjectReference Include="..\..\src\Skillion\Skillion.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Attributes" />
+    </ItemGroup>
+
 </Project>
