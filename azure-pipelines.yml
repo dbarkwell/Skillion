@@ -47,3 +47,11 @@ steps:
     includesymbols: true
     versioningScheme: 'off'
     verbosityPack: 'Normal'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Push'
+  inputs:
+    command: 'push'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+    nuGetFeedType: 'internal'
+    publishVstsFeed: '$(Artifact.PublishVstsFeed)'
