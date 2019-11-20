@@ -37,3 +37,10 @@ steps:
     command: test
     projects: '**/UnitTests/*.csproj'
     arguments: '--configuration $(buildConfiguration)'
+
+- task: NuGetCommand@2
+  inputs:
+    command: 'pack'
+    packagesToPack: '**/*.csproj'
+    versioningScheme: 'off'
+    includeSymbols: true
