@@ -46,4 +46,3 @@ steps:
     nobuild: true
     includesymbols: true
     versioningScheme: 'off'
-    buildProperties: '--no-restore'
