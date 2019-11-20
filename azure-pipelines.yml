@@ -43,5 +43,7 @@ steps:
   inputs:
     command: 'pack'
     packagesToPack: '**/*.csproj'
+    nobuild: true
     includesymbols: true
     versioningScheme: 'off'
+    buildProperties: '--no-restore'
