@@ -38,4 +38,12 @@ steps:
     projects: '**/UnitTests/*.csproj'
     arguments: '--configuration $(buildConfiguration)'
 
-
+- task: DotNetCoreCLI@2
+  displayName: 'Pack'
+  inputs:
+    command: 'pack'
+    packagesToPack: '**/*.csproj'
+    nobuild: true
+    includesymbols: true
+    versioningScheme: 'off'
+    verbosityPack: 'Normal'
