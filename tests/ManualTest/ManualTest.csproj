@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <UserSecretsId>d8b53ee9-a509-4369-8c32-e87d201ef7e2</UserSecretsId>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="wwwroot\" />
