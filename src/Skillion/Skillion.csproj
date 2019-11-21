@@ -7,6 +7,8 @@
         <IsPackable>true</IsPackable>
         <Authors>Dan Barkwell</Authors>
         <Description>ASP.NET Core package for creating intent endpoints for Amazon Alexa skills</Description>
+        <PackageLicenseUrl>https://github.com/dbarkwell/Skillion/blob/master/LICENSE.txt</PackageLicenseUrl>
+        <PackageProjectUrl>https://github.com/dbarkwell/Skillion</PackageProjectUrl>
     </PropertyGroup>
 
     <ItemGroup>
