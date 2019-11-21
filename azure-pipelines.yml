@@ -20,9 +20,13 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
-      if ((git branch) -match 'master' -and (Get-Content ./src/Skillion/Directory.Build.props | %{ $_ -match 'beta' }) -contains $true) {
-      Write-Host "##vso[task.LogIssue type=error;]Beta packages are not allowed in master branch"
-      exit 1
+      $branch = (git branch) -match master
+      $beta = (Get-Content ./src/Skillion/Directory.Build.props | %{ $_ -match 'beta' }) -contains $true
+      Write-Host $branch
+      Write-Host $beta
+      if ($branch -and $beta) {
+        Write-Host "##vso[task.LogIssue type=error;]Beta packages are not allowed in master branch"
+        exit 1
       }
 
 - task: UseDotNet@2
