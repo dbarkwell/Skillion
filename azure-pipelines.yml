@@ -60,7 +60,7 @@ steps:
     command: 'pack'
     packagesToPack: '**/*.csproj'
     nobuild: true
-    includesymbols: true
+    includesymbols: false
     versioningScheme: 'off'
     verbosityPack: 'Normal'
 
@@ -71,3 +71,4 @@ steps:
     packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
     nuGetFeedType: 'internal'
     publishVstsFeed: '$(Artifact.PublishVstsFeed)'
+
