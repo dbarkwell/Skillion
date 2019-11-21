@@ -20,7 +20,7 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
-      $branch = (git branch) -match 'master'
+      $branch = $(Build.SourceBranchName) -match 'master'
       $beta = (Get-Content ./src/Skillion/Directory.Build.props | %{ $_ -match 'beta' }) -contains $true
       Write-Host $branch
       Write-Host $beta
