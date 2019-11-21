@@ -7,7 +7,7 @@
         <IsPackable>true</IsPackable>
         <Authors>Dan Barkwell</Authors>
         <Description>ASP.NET Core package for creating intent endpoints for Amazon Alexa skills</Description>
-        <PackageLicenseUrl>https://github.com/dbarkwell/Skillion/blob/master/LICENSE.txt</PackageLicenseUrl>
+        <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
         <PackageProjectUrl>https://github.com/dbarkwell/Skillion</PackageProjectUrl>
     </PropertyGroup>
 
@@ -15,6 +15,10 @@
       <PackageReference Include="Alexa.NET" Version="1.8.2" />
       <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.0.0" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="../../LICENSE.txt" Pack="true" PackagePath="$(PackageLicenseFile)"/>
     </ItemGroup>
     
 </Project>
