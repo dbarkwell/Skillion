@@ -1,3 +1,4 @@
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("UnitTests")]
+[assembly: InternalsVisibleTo("SkillionUnitTests")]
+[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")] 

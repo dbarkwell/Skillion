@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Builder;
@@ -37,14 +38,16 @@ namespace Skillion.Middleware
         {
             var methods = assembly.GetTypes().AsParallel()
                 .SelectMany(t => t.GetMethods())
-                .Where(m => m.GetCustomAttributes(typeof(SkillionRequestAttribute), false).Any())
-                .ToArray();
-
+                .Where(m => m.GetCustomAttributes(typeof(SkillionRequestAttribute), false).Any());
+            
             var routeMapDictionary = new Dictionary<string, RouteData>();
             foreach (var method in methods)
             {
                 var skillionAttribute = method.GetCustomAttribute<SkillionRequestAttribute>();
 
+                if (skillionAttribute is null)
+                    continue;
+                
                 var type = method.ReflectedType?.FullName?.Split(".");
                 if (type == null || type.Length == 0)
                     continue;

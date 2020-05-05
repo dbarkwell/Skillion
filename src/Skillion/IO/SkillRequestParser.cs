@@ -15,7 +15,7 @@ using Skillion.Middleware;
 
 namespace Skillion.IO
 {
-    public class SkillRequestParser : ISkillRequestParser
+    internal class SkillRequestParser : ISkillRequestParser
     {
         private const long ContentLengthLimit = 1024 * 24;
         private readonly ILogger _logger;
@@ -34,7 +34,7 @@ namespace Skillion.IO
             _logger = logger;
         }
 
-        public async ValueTask<SkillRequest> ParseHttpRequestAsync(HttpRequest httpRequest)
+        public async Task<SkillRequest> ParseHttpRequestAsync(HttpRequest httpRequest)
         {
             if (httpRequest.ContentLength == null || httpRequest.ContentLength <= 0)
                 throw new InvalidDataException("Request body is missing.");
@@ -65,7 +65,7 @@ namespace Skillion.IO
             return skill;
         }
 
-        private async ValueTask<bool> IsValidRequestAsync(HttpRequest request, SkillRequest skillRequest, string body)
+        private async Task<bool> IsValidRequestAsync(HttpRequest request, SkillRequest skillRequest, string body)
         {
             if (!request.Headers.TryGetValue("SignatureCertChainUrl", out var signatureCertChainUrl))
                 return false;
@@ -84,7 +84,7 @@ namespace Skillion.IO
             return isTimestampValid && isRequestValid;
         }
 
-        private static async ValueTask<JObject> ParseBodyToRequestAsync(Stream stream)
+        private static async Task<JObject> ParseBodyToRequestAsync(Stream stream)
         {
             using var streamReader = new HttpRequestStreamReader(stream, Encoding.UTF8);
             using var jsonReader = new JsonTextReader(streamReader);

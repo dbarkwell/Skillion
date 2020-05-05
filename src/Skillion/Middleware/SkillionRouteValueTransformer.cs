@@ -10,7 +10,7 @@ using Skillion.Services;
 
 namespace Skillion.Middleware
 {
-    public class SkillionRouteValueTransformer : DynamicRouteValueTransformer
+    internal class SkillionRouteValueTransformer : DynamicRouteValueTransformer
     {
         private readonly ILogger _logger;
         private readonly IRouteDataService _routeDataService;

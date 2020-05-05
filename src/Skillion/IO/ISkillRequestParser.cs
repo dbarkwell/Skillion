@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Http;
 
 namespace Skillion.IO
 {
-    public interface ISkillRequestParser
+    internal interface ISkillRequestParser
     {
-        ValueTask<SkillRequest> ParseHttpRequestAsync(HttpRequest httpRequest);
+        Task<SkillRequest> ParseHttpRequestAsync(HttpRequest httpRequest);
     }
 }

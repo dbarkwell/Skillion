@@ -28,7 +28,7 @@ namespace SkillionUnitTests
                 var httpRequest = new Mock<HttpRequest>();
                 httpRequest.Setup(x => x.ContentLength).Returns(length);
                 var exception = await Assert.ThrowsAsync<InvalidDataException>(() =>
-                    GetSkillRequestParser().ParseHttpRequestAsync(httpRequest.Object).AsTask());
+                    GetSkillRequestParser().ParseHttpRequestAsync(httpRequest.Object));
                 Assert.Equal("Request body is missing.", exception.Message);
             }
 
@@ -71,7 +71,7 @@ namespace SkillionUnitTests
                 options.Setup(x => x.Value).Returns(new SkillionConfiguration {AlwaysValidateSkillRequest = true});
 
                 var exception = await Assert.ThrowsAsync<Exception>(() =>
-                    GetSkillRequestParser(options: options).ParseHttpRequestAsync(httpRequest.Object).AsTask());
+                    GetSkillRequestParser(options: options).ParseHttpRequestAsync(httpRequest.Object));
                 Assert.Equal("Unable to process request. Always validate skill id is true and skill id is missing",
                     exception.Message);
             }
@@ -100,7 +100,7 @@ namespace SkillionUnitTests
                     {AlwaysValidateSkillRequest = true, SkillId = "XYZ123"});
 
                 var exception = await Assert.ThrowsAsync<Exception>(() =>
-                    GetSkillRequestParser(webHostEnv, options).ParseHttpRequestAsync(httpRequest.Object).AsTask());
+                    GetSkillRequestParser(webHostEnv, options).ParseHttpRequestAsync(httpRequest.Object));
                 Assert.Equal("Invalid application id.", exception.Message);
             }
 
@@ -136,7 +136,7 @@ namespace SkillionUnitTests
 
                 var exception = await Assert.ThrowsAsync<Exception>(() =>
                     GetSkillRequestParser(webHostEnv, options, requestValidator)
-                        .ParseHttpRequestAsync(httpRequest.Object).AsTask());
+                        .ParseHttpRequestAsync(httpRequest.Object));
 
                 requestValidator.Verify(x =>
                     x.IsRequestValidAsync(It.IsAny<string>(), It.IsAny<Uri>(), It.IsAny<string>()));
@@ -171,7 +171,7 @@ namespace SkillionUnitTests
                     {AlwaysValidateSkillRequest = true, SkillId = "ABC123"});
 
                 var exception = await Assert.ThrowsAsync<Exception>(() =>
-                    GetSkillRequestParser(webHostEnv, options).ParseHttpRequestAsync(httpRequest.Object).AsTask());
+                    GetSkillRequestParser(webHostEnv, options).ParseHttpRequestAsync(httpRequest.Object));
 
                 httpRequest.Verify(x => x.Headers.TryGetValue("SignatureCertChainUrl", out signatureCertChainUrl));
 
@@ -207,7 +207,7 @@ namespace SkillionUnitTests
                     {AlwaysValidateSkillRequest = true, SkillId = "ABC123"});
 
                 var exception = await Assert.ThrowsAsync<Exception>(() =>
-                    GetSkillRequestParser(webHostEnv, options).ParseHttpRequestAsync(httpRequest.Object).AsTask());
+                    GetSkillRequestParser(webHostEnv, options).ParseHttpRequestAsync(httpRequest.Object));
 
                 httpRequest.Verify(x => x.Headers.TryGetValue("Signature", out signature));
 
@@ -246,7 +246,7 @@ namespace SkillionUnitTests
 
                 var exception = await Assert.ThrowsAsync<Exception>(() =>
                     GetSkillRequestParser(webHostEnv, options, requestValidator)
-                        .ParseHttpRequestAsync(httpRequest.Object).AsTask());
+                        .ParseHttpRequestAsync(httpRequest.Object));
 
                 requestValidator.Verify(x => x.IsTimestampValid(It.IsAny<SkillRequest>()));
                 Assert.Equal("Invalid request. Check timestamp or signature.", exception.Message);
@@ -281,7 +281,7 @@ namespace SkillionUnitTests
                 var httpRequest = new Mock<HttpRequest>();
                 httpRequest.Setup(x => x.ContentLength).Returns(1024 * 1024);
                 var exception = await Assert.ThrowsAsync<InvalidDataException>(() =>
-                    GetSkillRequestParser().ParseHttpRequestAsync(httpRequest.Object).AsTask());
+                    GetSkillRequestParser().ParseHttpRequestAsync(httpRequest.Object));
                 Assert.Equal("Request body is too large.", exception.Message);
             }
 
