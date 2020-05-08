@@ -9,7 +9,7 @@ namespace SkillionUnitTests.Services
     public class RouteDataServiceTests
     {
         public class TryGetRoute
-        {
+        { 
             [Fact]
             public void IntentRequestDoesNotHaveRoute_ReturnsFalse()
             {

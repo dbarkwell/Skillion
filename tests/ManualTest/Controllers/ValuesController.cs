@@ -10,13 +10,8 @@ namespace ManualTest.Controllers
 {
     public class ValuesController : SkillionController
     {
-        [FallbackIntentRequest]
-        public SkillionActionResult<SkillResponse> Fallback()
-        {
-            return Hello();
-        }
-
         [IntentRequest("HelloIntent")]
+        [FallbackIntentRequest]
         public SkillionActionResult<SkillResponse> Hello()
         {
             if (!TryCastRequest<IntentRequest>(out var intent))

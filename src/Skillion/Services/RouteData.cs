@@ -1,6 +1,6 @@
 namespace Skillion.Services
 {
-    public class RouteData
+    public sealed class RouteData
     {
         public RouteData(string controller, string action)
         {

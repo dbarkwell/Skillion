@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Skillion.GeneratedServices;
 using Skillion.Middleware;
 
 namespace ManualTest
@@ -18,7 +19,7 @@ namespace ManualTest
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSkillion();
+            services.AddSkillion(RouteMap.GetRoutes());
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
