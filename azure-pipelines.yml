@@ -68,4 +68,4 @@ steps:
   inputs:
     command: 'custom'
     custom: 'push'
-    arguments: '$(Build.ArtifactStagingDirectory)/*.nupkg --source $(Artifact.PublishVstsFeed) --interactive --api-key PAT --skip-duplicate'
+    arguments: '$(Build.ArtifactStagingDirectory)/**/*.nupkg --source $(Artifact.PublishVstsFeed) --interactive --api-key PAT --skip-duplicate'
