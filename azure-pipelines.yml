@@ -66,6 +66,7 @@ steps:
 
 - task: DotNetCoreCLI@2
   inputs:
+    displayName: 'Push'
     command: 'custom'
-    custom: 'push'
-    arguments: '$(Build.ArtifactStagingDirectory)/**/*.nupkg --source $(Artifact.PublishVstsFeed) --interactive --api-key PAT --skip-duplicate'
+    custom: 'nuget'
+    arguments: 'push $(Build.ArtifactStagingDirectory)/*.nupkg --source $(Artifact.PublishVstsFeed) --interactive --api-key PAT --skip-duplicate'
