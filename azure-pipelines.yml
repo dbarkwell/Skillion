@@ -20,25 +20,31 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
-      $branch = '$(Build.SourceBranchName)' -eq 'master'
+      $main = '$(Build.SourceBranchName)' -eq 'master'
       $beta = (Get-Content ./src/Skillion/Directory.Build.props | %{ $_ -match 'beta' }) -contains $true
-      Write-Host $branch
+      Write-Host $main
       Write-Host $beta
-      if ($branch -and $beta) {
+      if ($main -and $beta) {
         Write-Host "##vso[task.LogIssue type=error;]Beta packages are not allowed in master branch"
         exit 1
       }
+      elseif (-Not $main -and -Not $beta) {
+        Write-Host "##vso[task.LogIssue type=error;]Branches must have beta packages"
+        exit 1
+      }
+
+- task: NuGetAuthenticate@0
 
 - task: UseDotNet@2
   displayName: 'Install .NET Core 3 SDK'
   inputs:
     version: '3.1.x'
 
-- task: DotNetCoreCLI@2
+
+- task: CmdLine@2
   displayName: 'Restore nuget packages'
   inputs:
-    command: restore
-    projects: '**/*.csproj'
+    script: 'dotnet restore'
 
 - task: DotNetCoreCLI@2
   displayName: 'Build'
@@ -64,11 +70,7 @@ steps:
     versioningScheme: 'off'
     verbosityPack: 'Normal'
 
-- task: DotNetCoreCLI@2
+- task: CmdLine@2
   displayName: 'Push'
   inputs:
-    command: 'push'
-    packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
-    nuGetFeedType: 'internal'
-    publishVstsFeed: '$(Artifact.PublishVstsFeed)'
-
+    script: 'dotnet nuget push --api-key AzureArtifacts --skip-duplicate --source $(Artifact.Source) $(Build.ArtifactStagingDirectory)/*.nupkg'
