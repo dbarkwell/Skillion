@@ -44,7 +44,7 @@ steps:
 - task: CmdLine@2
   displayName: 'Restore nuget packages'
   inputs:
-    script: 'dotnet restore **/*.csproj'
+    script: 'dotnet restore ~/**/*.csproj'
 
 - task: DotNetCoreCLI@2
   displayName: 'Build'
