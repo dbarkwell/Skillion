@@ -33,16 +33,18 @@ steps:
         exit 1
       }
 
+- task: NuGetAuthenticate@0
+
 - task: UseDotNet@2
   displayName: 'Install .NET Core 3 SDK'
   inputs:
     version: '3.1.x'
 
-- task: DotNetCoreCLI@2
+
+- task: CmdLine@2
   displayName: 'Restore nuget packages'
   inputs:
-    command: restore
-    projects: '**/*.csproj'
+    script: 'dotnet restore **/*.csproj'
 
 - task: DotNetCoreCLI@2
   displayName: 'Build'
@@ -68,9 +70,7 @@ steps:
     versioningScheme: 'off'
     verbosityPack: 'Normal'
 
-- task: DotNetCoreCLI@2
+- task: CmdLine@2
   displayName: 'Push'
   inputs:
-    command: 'custom'
-    custom: 'nuget'
-    arguments: 'push $(Build.ArtifactStagingDirectory)/*.nupkg -s $(Artifact.Source) -k $(Artifact.Key) --skip-duplicate'
+    script: 'dotnet nuget push --api-key AzureArtifacts --skip-duplicate --source $(Artifact.Source) $(Build.ArtifactStagingDirectory)/*.nupkg'
