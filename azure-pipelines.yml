@@ -73,5 +73,4 @@ steps:
   inputs:
     command: 'custom'
     custom: 'nuget'
-    arguments: 'push $(Build.ArtifactStagingDirectory)/*.nupkg --source $(Artifact.PublishFeedUrl) --interactive --api-key PAT --skip-duplicate'
-
+    arguments: 'push $(Build.ArtifactStagingDirectory)/*.nupkg -s $(Artifact.Source) -k $(Artifact.Key) --skip-duplicate'
