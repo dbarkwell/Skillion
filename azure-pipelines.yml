@@ -65,10 +65,7 @@ steps:
     verbosityPack: 'Normal'
 
 - task: DotNetCoreCLI@2
-  displayName: 'Push'
   inputs:
-    command: 'push'
-    packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
-    nuGetFeedType: 'internal'
-    publishVstsFeed: '$(Artifact.PublishVstsFeed)'
-    arguments: '--skip-duplicate'
+    command: 'custom'
+    custom: 'push'
+    arguments: '$(Build.ArtifactStagingDirectory)/*.nupkg --source $(Artifact.PublishVstsFeed) --interactive --api-key PAT --skip-duplicate'
