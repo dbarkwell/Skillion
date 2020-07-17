@@ -1,7 +1,5 @@
 using System;
-using System.Net;
 using System.Reflection;
-using System.Windows.Markup;
 using Alexa.NET.Response;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
