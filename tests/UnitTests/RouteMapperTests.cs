@@ -89,5 +89,26 @@ namespace SkillionUnitTests
             Assert.Equal(controllerName, routes[intentName].Controller);
             Assert.Equal(truncatedMethodName, routes[intentName].Action);
         }
+        
+        [Fact]
+        public void GivenControllerAction_WhenHasAttributeAndDoubleControllerSuffix_ReturnRoutes()
+        {
+            const string intentName = "TestIntent";
+            const string controllerName = "TestController";
+            const string methodName = "TestAsyncAsync";
+            const string truncatedMethodName = "TestAsync";
+            
+            var controllerNamespace = $"RouteMapperTests.Controllers.{controllerName}Controller";
+
+            var type = new Mock<Type>();
+            type.Setup(t => t.FullName).Returns(controllerNamespace);
+            var testMemberInfo = new TestMemberInfo(type.Object, methodName, new SkillionRequestAttribute[] {new IntentRequestAttribute(intentName)});
+
+            var routes = RouteMapper.MapRoutes(new List<MemberInfo> {testMemberInfo});
+            
+            Assert.True(routes.ContainsKey(intentName));
+            Assert.Equal(controllerName, routes[intentName].Controller);
+            Assert.Equal(truncatedMethodName, routes[intentName].Action);
+        }
     }
 }

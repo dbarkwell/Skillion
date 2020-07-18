@@ -22,8 +22,8 @@ namespace Skillion
                 if (type == null || type.Length == 0)
                     continue;
 
-                var controller = type[^1].Replace("Controller", string.Empty);
-                var action = RemoveAsyncSuffix(method.Name);
+                var controller = RemoveSuffix(type[^1], "Controller");
+                var action = RemoveSuffix(method.Name, "Async");
 
                 routeMapDictionary.Add(skillionAttribute.Name, new RouteData(controller, action));
             }
@@ -31,10 +31,10 @@ namespace Skillion
             return routeMapDictionary;
         }
         
-        private static string RemoveAsyncSuffix(string action)
+        private static string RemoveSuffix(string value, string suffix)
         {
-            var lastLocation = action.LastIndexOf("Async", StringComparison.Ordinal);
-            return lastLocation == -1 ? action : action.Remove(lastLocation);
+            var lastLocation = value.LastIndexOf(suffix, StringComparison.Ordinal);
+            return lastLocation == -1 ? value : value.Remove(lastLocation);
         }
     }
 }
