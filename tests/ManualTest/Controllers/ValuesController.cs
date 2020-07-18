@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Alexa.NET;
 using Alexa.NET.Request;
 using Alexa.NET.Request.Type;
@@ -10,24 +11,18 @@ namespace ManualTest.Controllers
 {
     public class ValuesController : SkillionController
     {
-        [FallbackIntentRequest]
-        public SkillionActionResult<SkillResponse> Fallback()
-        {
-            return Hello();
-        }
-
         [IntentRequest("HelloIntent")]
-        public SkillionActionResult<SkillResponse> Hello()
+        public Task<SkillionActionResult<SkillResponse>> HelloAsyncAsync()
         {
             if (!TryCastRequest<IntentRequest>(out var intent))
-                return ResponseBuilder.TellWithCard("Something went wrong", "Error", "Something went wrong");
+                return Task.FromResult<SkillionActionResult<SkillResponse>>(ResponseBuilder.TellWithCard("Something went wrong", "Error", "Something went wrong"));
 
             var numberOfItems = intent.Intent.Slots != null
                 ? ((IntentRequest) RequestContext).Intent.Slots["NumberOfItems"].Value
                 : "0";
 
             var text = $"Here are your {numberOfItems} items";
-            return ResponseBuilder.TellWithCard(text, "Your items", text);
+            return Task.FromResult<SkillionActionResult<SkillResponse>>(ResponseBuilder.TellWithCard(text, "Your items", text));
         }
 
         [IntentRequest("SessionIntent")]
@@ -43,6 +38,13 @@ namespace ManualTest.Controllers
             var intentRequest = RequestContext as IntentRequest;
             intentRequest?.Intent.Slots.Add("fromCity", new Slot {Name = "fromCity", Value = "Toronto"});
             return ResponseBuilder.DialogDelegate(intentRequest?.Intent);
+        }
+
+        [IntentRequest("AskIntent")]
+        public SkillionActionResult<SkillResponse> Ask()
+        {
+            return ResponseBuilder.Ask("Hello",
+                new Reprompt {OutputSpeech = new PlainTextOutputSpeech {Text = "Is it me you're looking for?"}});
         }
 
         [LaunchRequest]
