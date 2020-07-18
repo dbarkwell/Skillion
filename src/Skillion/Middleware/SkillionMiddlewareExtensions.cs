@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Builder;
@@ -25,40 +24,20 @@ namespace Skillion.Middleware
             services.AddScoped<ISkillRequestParser, SkillRequestParser>();
             services.AddScoped<SkillionRouteValueTransformer>();
             services.AddScoped<ISkillRequestValidator, SkillRequestValidator>();
-            services.AddSingleton<IRouteDataService>(MapRoutes(assembly));
+            services.AddSingleton<IRouteDataService>(new RouteDataService(RouteMapper.MapRoutes(GetMethods(assembly))));
         }
-
+        
         public static void UseSkillion(this IApplicationBuilder app)
         {
             app.UseRouting();
             app.UseEndpoints(e => e.MapDynamicControllerRoute<SkillionRouteValueTransformer>("/"));
         }
-
-        private static RouteDataService MapRoutes(Assembly assembly)
+        
+        private static IEnumerable<MethodInfo> GetMethods(Assembly assembly)
         {
-            var methods = assembly.GetTypes().AsParallel()
+            return assembly.GetTypes().AsParallel()
                 .SelectMany(t => t.GetMethods())
-                .Where(m => m.GetCustomAttributes(typeof(SkillionRequestAttribute), false).Any());
-            
-            var routeMapDictionary = new Dictionary<string, RouteData>();
-            foreach (var method in methods)
-            {
-                var skillionAttribute = method.GetCustomAttribute<SkillionRequestAttribute>();
-
-                if (skillionAttribute is null)
-                    continue;
-                
-                var type = method.ReflectedType?.FullName?.Split(".");
-                if (type == null || type.Length == 0)
-                    continue;
-
-                var controller = type[^1].Replace("Controller", string.Empty);
-                var action = method.Name;
-
-                routeMapDictionary.Add(skillionAttribute.Name, new RouteData(controller, action));
-            }
-
-            return new RouteDataService(routeMapDictionary);
+                .Where(m => m.GetCustomAttributes(typeof(SkillionRequestAttribute), false).Any());    
         }
     }
 }
